@@ -1,7 +1,6 @@
 #include "stdio_myos.h"
 #include "math.h"
 
-// VGA entry
 uint16 vga_entry(uint8 ch, uint8 fore_color, uint8 back_color) {
     uint16 ax = 0;
     uint8 ah = 0, al = 0;
