@@ -70,7 +70,7 @@ uint32 digit_count( int num) {
     }
     return count;
 }
-uint32 digit_count64(long num) {
+uint32 digit_count64(uint64 num) {
   uint32 count = 0;
   if(num == 0)
     return 1;

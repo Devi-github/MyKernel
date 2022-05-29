@@ -38,7 +38,7 @@ uint32 strlen(const char*);
 // Gets length of a number
 uint32 digit_count(int);
 // Gets length of a 64 bit number
-uint32 digit_count64(long);
+uint32 digit_count64(uint64);
 // Gets string from number
 void itoa(int, char*);
 // Gets string from a 64 bit number

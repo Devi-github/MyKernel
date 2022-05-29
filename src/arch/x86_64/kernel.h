@@ -10,6 +10,9 @@ typedef unsigned long long size_t;
 
 #define nullptr (void*)0x0
 #define UINT64_MAX 0xFFFFFFFFFFFFFFFF
+#define UINT32_MAX 0xFFFFFFFF
+#define UINT16_MAX 0xFFFF
+#define UINT8_MAX 0xFF
 
 typedef uint8 bool;
 
