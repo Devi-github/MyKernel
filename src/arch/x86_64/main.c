@@ -15,10 +15,6 @@ void _cmain() {
     info.g_fore_color = WHITE;
 
     init_vga(&info, WHITE, BLACK);
-    uint64 a = __random64(&seed);
-    print_long(&info, a);
-    print_new_line(&info);
-    a = __random64(&seed);
-    print_long(&info, a);
-    print_new_line(&info);
+
+    float a = 12.778f;
 }

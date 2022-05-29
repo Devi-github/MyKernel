@@ -16,8 +16,8 @@ typedef unsigned long long size_t;
 
 typedef uint8 bool;
 
-#define true 1
-#define false 0
+#define true (bool)1
+#define false (bool)0
 #endif
 
 #ifndef KERNEL_H
@@ -25,6 +25,8 @@ typedef uint8 bool;
 
 #define VGA_ADDRESS 0xB8000
 #define BUFSIZE 2200
+#define VGA_WIDTH 80
+#define VGA_HEIGHT 25
 
 uint16* vga_buffer;
 

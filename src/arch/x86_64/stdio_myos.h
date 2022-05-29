@@ -19,10 +19,12 @@ struct VGAInfo {
 // STDOUT SECTION
 // ##############################################
 
-// Sets cursor at specific index
+// VGA Entry
 uint16 vga_entry(uint8, uint8, uint8);
-// Sets cursor at specific coordinates
+// Sets cursor at specific index
 void set_cursor(struct VGAInfo*, uint32);
+// Sets cursor at specific coordinates
+void set_cursor_coord(struct VGAInfo*, uint32, uint32);
 // Clears VGA buffer
 void clear_vga_buffer(struct VGAInfo*, uint16**, uint8, uint8);
 /*
