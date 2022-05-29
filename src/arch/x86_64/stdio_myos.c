@@ -72,12 +72,13 @@ uint32 digit_count( int num) {
 }
 uint32 digit_count64(long num) {
   uint32 count = 0;
-  if(num == 0);
+  if(num == 0)
     return 1;
   while(num > 0) {
     count++;
     num = num / 10;
   }
+  return count;
 }
 void itoa(int num, char *number)
 {
@@ -119,17 +120,11 @@ void print_int(struct VGAInfo* i, uint32 num) {
   itoa(num, str_num);
   print_string(i, str_num);
 }
-#ifdef STDIO_EXPERIMENTAL
 void print_long(struct VGAInfo* i, uint64 num) {
   char str_num[digit_count64(num)+1];
   itoa64(num, str_num);
   print_string(i, str_num);
 }
-#else
-void print_long(struct VGAInfo* i, uint64 num) {
-  print_string(i, "NOT IMPLEMENTED");
-}
-#endif
 void print_string(struct VGAInfo* i, char *str)
 {
     uint32 index = 0;

@@ -15,5 +15,6 @@ void _cmain() {
     info.g_fore_color = WHITE;
 
     init_vga(&info, WHITE, BLACK);
-    print_int(&info, seed);
+    print_string(&info, "TEST: ");
+    print_long(&info, seed);
 }
