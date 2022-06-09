@@ -23,12 +23,10 @@ typedef uint8 bool;
 #ifndef KERNEL_H
 #define KERNEL_H
 
-#define VGA_ADDRESS 0xB8000
+#define VGA_ADDRESS (void*)0xB8000
 #define BUFSIZE 2200
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
-
-uint16* vga_buffer;
 
 #define NULL 0
 

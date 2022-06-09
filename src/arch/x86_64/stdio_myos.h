@@ -13,6 +13,8 @@ struct VGAInfo {
     uint8 g_fore_color;
     // Background color
     uint8 g_back_color;
+    // Buffer pointer
+    uint16* vga_buffer;
 };
 
 // ##############################################

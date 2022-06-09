@@ -16,5 +16,5 @@ void _cmain() {
 
     init_vga(&info, WHITE, BLACK);
 
-    float a = 12.778f;
+    print_string(&info, "Hello, world!");
 }

@@ -33,15 +33,15 @@ void clear_vga_buffer(struct VGAInfo* info, uint16** buffer, uint8 fore_color, u
 }
 
 void init_vga(struct VGAInfo* i, uint8 fore_color, uint8 back_color) {
-    vga_buffer = (uint16*)VGA_ADDRESS;
-    clear_vga_buffer(i, &vga_buffer, fore_color, back_color);
+    i->vga_buffer = (uint16*)VGA_ADDRESS;
+    clear_vga_buffer(i, &i->vga_buffer, fore_color, back_color);
     i->g_fore_color = fore_color;
     i->g_back_color = back_color;
 }
 void print_new_line(struct VGAInfo* i) {
     if(i->next_line_index >= 55) {
         i->next_line_index = 0;
-        clear_vga_buffer(i, &vga_buffer, i->g_fore_color, i->g_back_color);
+        clear_vga_buffer(i, &i->vga_buffer, i->g_fore_color, i->g_back_color);
     }
     i->vga_index = 80*i->next_line_index;
     i->next_line_index++;
@@ -51,7 +51,7 @@ void print_char(struct VGAInfo* i, char ch) {
         print_new_line(i);
         return;
     }
-    vga_buffer[i->vga_index] = vga_entry(ch, i->g_fore_color, i->g_back_color);
+    i->vga_buffer[i->vga_index] = vga_entry(ch, i->g_fore_color, i->g_back_color);
     i->vga_index++;
 }
 uint32 strlen(const char* str) {
