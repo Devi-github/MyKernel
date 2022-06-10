@@ -13,7 +13,7 @@ To install all prerequisites use these commands:
 ```bash
 sudo apt update
 sudo apt install qemu -y
-sudo apt install qemu-systems-x86 -y
+sudo apt install qemu-system-x86 -y
 sudo apt install xorriso -y
 sudo apt install mtools -y
 ```
