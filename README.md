@@ -18,6 +18,12 @@ sudo apt install xorriso -y
 sudo apt install mtools -y
 ```
 
+You will also need `gcc` and `nasm` for compiling files:
+```bash
+sudo apt install gcc
+sudo apt install nasm
+```
+
 ## Installation
 
 ### Linux Debian or Ubuntu
