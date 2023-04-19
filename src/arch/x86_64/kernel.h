@@ -8,7 +8,6 @@ typedef unsigned long uint64;
 typedef unsigned long long uint128;
 typedef unsigned long long size_t;
 
-#define nullptr (void*)0x0
 #define UINT64_MAX 0xFFFFFFFFFFFFFFFF
 #define UINT32_MAX 0xFFFFFFFF
 #define UINT16_MAX 0xFFFF
@@ -28,7 +27,7 @@ typedef uint8 bool;
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
 
-#define NULL 0
+#define NULL (void*)0
 
 enum vga_color {
     BLACK,

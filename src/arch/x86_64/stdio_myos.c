@@ -1,5 +1,20 @@
 #include "stdio_myos.h"
-#include "math.h"
+
+// VGA interface information structure
+typedef struct VGAInfo {
+    // Index VGA cursor is currently at
+    uint32 vga_index;
+    // Next line index
+    uint32 next_line_index;
+    // Foreground color
+    uint8 g_fore_color;
+    // Background color
+    uint8 g_back_color;
+    // Buffer pointer
+    uint16* vga_buffer;
+} VGAInfo;
+
+VGAInfo info;
 
 uint16 vga_entry(uint8 ch, uint8 fore_color, uint8 back_color) {
     uint16 ax = 0;
@@ -15,44 +30,44 @@ uint16 vga_entry(uint8 ch, uint8 fore_color, uint8 back_color) {
 
     return ax;
 }
-void set_cursor(struct VGAInfo* i, uint32 index) {
-    i->vga_index = index;
-    i->next_line_index = i->vga_index / 80 + 1;
+void set_cursor(uint32 index) {
+    info.vga_index = index;
+    info.next_line_index = info.vga_index / 80 + 1;
 }
-void set_cursor_coord(struct VGAInfo* i, uint32 x, uint32 y) {
-    i->vga_index = x + y * 80;
-    i->next_line_index = y + 1;
+void set_cursor_coord(uint32 x, uint32 y) {
+    info.vga_index = x + y * 80;
+    info.next_line_index = y + 1;
 }
-void clear_vga_buffer(struct VGAInfo* info, uint16** buffer, uint8 fore_color, uint8 back_color) {
+void clear_vga_buffer(uint16** buffer, uint8 fore_color, uint8 back_color) {
     uint32 i;
     for(i = 0; i < BUFSIZE; i++) {
         (*buffer)[i] = vga_entry(NULL, fore_color, back_color);
     }
-    info->next_line_index = 1;
-    info->vga_index = 0;
+    info.next_line_index = 1;
+    info.vga_index = 0;
 }
 
-void init_vga(struct VGAInfo* i, uint8 fore_color, uint8 back_color) {
-    i->vga_buffer = (uint16*)VGA_ADDRESS;
-    clear_vga_buffer(i, &i->vga_buffer, fore_color, back_color);
-    i->g_fore_color = fore_color;
-    i->g_back_color = back_color;
+void init_vga(uint8 fore_color, uint8 back_color) {
+    info.vga_buffer = (uint16*)VGA_ADDRESS;
+    clear_vga_buffer(&info.vga_buffer, fore_color, back_color);
+    info.g_fore_color = fore_color;
+    info.g_back_color = back_color;
 }
-void print_new_line(struct VGAInfo* i) {
-    if(i->next_line_index >= 55) {
-        i->next_line_index = 0;
-        clear_vga_buffer(i, &i->vga_buffer, i->g_fore_color, i->g_back_color);
+void print_new_line() {
+    if(info.next_line_index >= 55) {
+        info.next_line_index = 0;
+        clear_vga_buffer(&info.vga_buffer, info.g_fore_color, info.g_back_color);
     }
-    i->vga_index = 80*i->next_line_index;
-    i->next_line_index++;
+    info.vga_index = 80*info.next_line_index;
+    info.next_line_index++;
 }
-void print_char(struct VGAInfo* i, char ch) {
+void print_char(char ch) {
     if(ch == '\n') {
-        print_new_line(i);
+        print_new_line();
         return;
     }
-    i->vga_buffer[i->vga_index] = vga_entry(ch, i->g_fore_color, i->g_back_color);
-    i->vga_index++;
+    info.vga_buffer[info.vga_index] = vga_entry(ch, info.g_fore_color, info.g_back_color);
+    info.vga_index++;
 }
 uint32 strlen(const char* str) {
     uint32 length = 0;
@@ -115,21 +130,21 @@ void itoa64(uint64 num, char *number) {
     number[dgcount] = '\0';
   }
 }
-void print_int(struct VGAInfo* i, uint32 num) {
+void print_int(uint32 num) {
   char str_num[digit_count(num)+1];
   itoa(num, str_num);
-  print_string(i, str_num);
+  print_string(str_num);
 }
-void print_long(struct VGAInfo* i, uint64 num) {
+void print_long(uint64 num) {
   char str_num[digit_count64(num)+1];
   itoa64(num, str_num);
-  print_string(i, str_num);
+  print_string(str_num);
 }
-void print_string(struct VGAInfo* i, char *str)
+void print_string(char *str)
 {
     uint32 index = 0;
     while(str[index]){
-        print_char(i, str[index]);
+        print_char(str[index]);
         index++;
     }
 }
@@ -170,7 +185,7 @@ void sleep(uint32 timer_count)
   wait_for_io(timer_count);
 }
 
-void test_input(struct VGAInfo* info)
+void test_input()
 {
   char ch = 0;
   char keycode = 0;
@@ -182,7 +197,7 @@ void test_input(struct VGAInfo* info)
       print_new_line(info);
     } else{
       ch = get_ascii_char(keycode);
-      print_char(info, ch);
+      print_char(ch);
     }
     if(first)
       sleep(0x009FFFFF);
