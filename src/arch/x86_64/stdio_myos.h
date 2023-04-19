@@ -9,8 +9,12 @@
 // STDOUT SECTION
 // ##############################################
 
-// VGA Entry
-uint16 vga_entry(uint8, uint8, uint8);
+/// @brief Computes an entry into a VGA buffer
+/// @param character Character to input
+/// @param foreground Foreground color
+/// @param background Background color
+/// @return Returns a low-level entry into vga
+uint16 vga_entry(uint8 character, uint8 foreground, uint8 background);
 // Sets cursor at specific index
 void set_cursor(uint32);
 // Sets cursor at specific coordinates
@@ -41,6 +45,11 @@ void print_int(uint32);
 void print_long(uint64);
 // Prints c-type string
 void print_string(char*);
+
+/// @brief Sets foreground and background colors for next entries
+/// @param foreground Foreground color
+/// @param background Background color
+void set_color(uint8 foreground, uint8 background);
 
 // ##############################################
 // STDIN SECTION

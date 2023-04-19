@@ -10,5 +10,7 @@ void _cmain() {
 
     init_vga(WHITE, BLACK);
 
-    print_string("Hello\nworld");
+    print_string("Hello                          \n");
+    set_color(16, 15);
+    print_string("World                          \n");
 }

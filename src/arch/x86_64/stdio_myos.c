@@ -30,6 +30,10 @@ uint16 vga_entry(uint8 ch, uint8 fore_color, uint8 back_color) {
 
     return ax;
 }
+void set_color(uint8 fr, uint8 bg) {
+    info.g_fore_color = fr;
+    info.g_back_color = bg;
+}
 void set_cursor(uint32 index) {
     info.vga_index = index;
     info.next_line_index = info.vga_index / 80 + 1;
@@ -41,7 +45,7 @@ void set_cursor_coord(uint32 x, uint32 y) {
 void clear_vga_buffer(uint16** buffer, uint8 fore_color, uint8 back_color) {
     uint32 i;
     for(i = 0; i < BUFSIZE; i++) {
-        (*buffer)[i] = vga_entry(NULL, fore_color, back_color);
+        (*buffer)[i] = vga_entry(0, fore_color, back_color);
     }
     info.next_line_index = 1;
     info.vga_index = 0;
