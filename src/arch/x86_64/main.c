@@ -10,7 +10,14 @@ void _cmain() {
 
     init_vga(WHITE, BLACK);
 
-    print_string("Hello                          \n");
-    set_color(16, 15);
-    print_string("World                          \n");
+    float a = 3.14159;
+
+    set_cursor(0);
+    uint16 shrt = __random16(&seed);
+    print_int(shrt);
+    print_new_line();
+    char str[20];
+    itoa64(8844564569835, str);
+    print_string(str);
+    return;
 }

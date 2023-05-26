@@ -4,8 +4,8 @@ iso := build/os-$(arch).iso
 
 linker_script := src/arch/$(arch)/linker.ld
 grub_cfg := src/arch/$(arch)/grub.cfg
-assembly_source_files := $(wildcard src/arch/$(arch)/*.asm)
-assembly_object_files := $(patsubst src/arch/$(arch)/%.asm, \
+assembly_source_files := $(wildcard src/arch/$(arch)/*.s)
+assembly_object_files := $(patsubst src/arch/$(arch)/%.s, \
 	build/arch/$(arch)/%.o, $(assembly_source_files))
 c_source_files := $(wildcard src/arch/$(arch)/*.c)
 c_object_files := $(patsubst src/arch/$(arch)/%.c, \
@@ -39,10 +39,11 @@ $(kernel): $(assembly_object_files) $(c_object_files) $(linker_script)
 # compile c files
 build/arch/$(arch)/%.o: src/arch/$(arch)/%.c
 	@mkdir -p $(shell dirname $@)
-	@gcc -m64 -c $< -o $@
+	@gcc -ggdb -m64 -ffreestanding -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -c $< -o $@
 
 # compile assembly files
-build/arch/$(arch)/%.o: src/arch/$(arch)/%.asm
+build/arch/$(arch)/%.o: src/arch/$(arch)/%.s
 	@mkdir -p $(shell dirname $@)
+#	@gcc -c $< -o $@
 	@nasm -felf64 $< -o $@
 	
