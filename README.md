@@ -31,7 +31,7 @@ sudo apt install nasm
 Just copy the repository in your directory using 
 
 ```bash
-git clone https://github.com/IgruantyPlay/MyKernel.git
+git clone https://github.com/pi4erd/MyKernel.git
 ```
 
 And that is all! You are ready for the next step.
