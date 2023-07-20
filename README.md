@@ -46,7 +46,7 @@ To build our little OS run:
 make all # or just 'make', no difference
 ```
 
-Than to run it just use `make run` or `qemu-systems-x86_64 -cdrom build/os-x86_64.iso`
+Then to run it just use `make run` or `qemu-systems-x86_64 -cdrom build/os-x86_64.iso`
 
 ## And that is it!
 
