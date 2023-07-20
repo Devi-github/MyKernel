@@ -19,3 +19,11 @@ jobs:
       run: make
     - name: make check
       run: make check
+    - name: Push nightly release
+      uses: eine/tip@master
+      with:
+        tag: nightly
+        rm: true
+        token: ${{ secrets.GITHUB_TOKEN }}
+        files: build/*.iso
+    # https://github.com/pi4erd/MyKernel/releases/tag/nightly
