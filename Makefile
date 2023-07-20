@@ -11,7 +11,7 @@ c_source_files := $(wildcard src/arch/$(arch)/*.c)
 c_object_files := $(patsubst src/arch/$(arch)/%.c, \
 	build/arch/$(arch)/%.o, $(c_source_files))
 
-.PHONY: all build clean run iso
+.PHONY: all build clean run iso check
 
 all: $(kernel)
 
@@ -25,6 +25,9 @@ run: $(iso)
 	@qemu-system-x86_64 -cdrom $(iso)
 
 build: $(iso)
+
+check: build
+	@file $(iso)
 
 iso: $(iso)
 
