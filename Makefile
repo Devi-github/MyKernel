@@ -13,7 +13,7 @@ c_object_files := $(patsubst src/arch/$(arch)/%.c, \
 
 .PHONY: all build clean run iso check
 
-all: $(kernel)
+all: check
 
 objdump: $(kernel)
 	@objdump -S $(kernel)
