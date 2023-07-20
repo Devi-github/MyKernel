@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# Config file for Debian-based distros. Created for github actions
+
+echo "Configuring system for build of system"
+
+sudo apt update
+sudo apt install -y gcc make nasm
+# QEMU only for emulation
+# sudo apt install qemu -y
+# sudo apt install qemu-system-x86 -y
+sudo apt install -y xorriso mtools
