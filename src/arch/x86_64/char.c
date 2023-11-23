@@ -1,4 +1,5 @@
 #include "char.h"
+#include "keyboard.h"
 
 char get_ascii_char(uint8 key_code)
 {
@@ -49,6 +50,7 @@ char get_ascii_char(uint8 key_code)
     case KEY_DOT : return '.';
     case KEY_FORESLHASH : return '/';
     case KEY_SPACE : return ' ';
+    case KEY_ENTER : return '\n';
     case KEY_UP: return 0xff;
     case KEY_DOWN: return 0xfe;
     case KEY_LEFT: return 0xfd;

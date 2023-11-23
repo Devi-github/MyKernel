@@ -1,13 +1,22 @@
 #ifndef STDIO_H
 #define STDIO_H
-#include "kernel.h"
-#include "keyboard.h"
-#include "char.h"
-#include "math.h"
+
+#include "types.h"
 
 // ##############################################
 // STDOUT SECTION
 // ##############################################
+
+typedef struct __FILE {
+    uint64 ID;
+    void (*write)(uint8);
+    uint8 (*read)();
+} FILE;
+
+#define stdout (FILE *)1
+#define stdin  (FILE *)2
+
+#define EOF (char)0
 
 /// @brief Computes an entry into a VGA buffer
 /// @param character Character to input
@@ -25,12 +34,8 @@ void clear_vga_buffer(uint16**, uint8, uint8);
 * Initialize VGA Text mode for screen, clears VGA buffer and sets foreground and background colors
 */
 void init_vga(uint8, uint8);
-// Prints new line
-void print_new_line();
-// Prints character on the screen
-void print_char(char);
 // Gets c-type string length
-uint32 strlen(const char*);
+size_t strlen(const char*);
 // Gets length of a number
 uint32 digit_count(int);
 // Gets length of a 64 bit number
@@ -39,6 +44,13 @@ uint32 digit_count64(uint64);
 void itoa(int, char*);
 // Gets string from a 64 bit number
 void itoa64(uint64, char*);
+
+#pragma region OBSOLETE
+
+// Prints new line
+void print_new_line();
+// Prints character on the screen
+void print_char(char);
 // Prints unsigned 32 bit number
 void print_int(uint32);
 // Prints unsigned 64 bit number
@@ -46,10 +58,15 @@ void print_long(uint64);
 // Prints c-type string
 void print_string(char*);
 
+#pragma endregion
+
 /// @brief Sets foreground and background colors for next entries
 /// @param foreground Foreground color
 /// @param background Background color
 void set_color(uint8 foreground, uint8 background);
+
+void putc(FILE*, char);
+void puts(FILE*, const char*);
 
 // ##############################################
 // STDIN SECTION
@@ -59,6 +76,8 @@ uint8 inb(uint16);
 void outb(uint16, uint8);
 // Gets input keycode from keyboard key pressed
 char get_input_keycode();
+
+char getc(FILE*);
 /*
 keep the cpu busy for doing nothing(nop)
 so that io port will not be processed by cpu
@@ -67,6 +86,5 @@ here timer can also be used, but lets do this in looping counter
 void wait_for_io(uint32);
 // Sleeps for amount of ticks
 void sleep(uint32);
-void test_input();
 
 #endif

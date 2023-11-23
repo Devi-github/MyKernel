@@ -1,5 +1,10 @@
 #include "stdio_myos.h"
 
+#include "kernel.h"
+
+#include "keyboard.h"
+#include "char.h"
+
 // VGA interface information structure
 typedef struct VGAInfo {
     // Index VGA cursor is currently at
@@ -34,7 +39,23 @@ void set_color(uint8 fr, uint8 bg) {
     info.g_fore_color = fr;
     info.g_back_color = bg;
 }
-void set_cursor(uint32 index) {
+void putc(FILE *f, char c)
+{
+    if(f == stdout) {
+        print_char(c);
+        return;
+    }
+    f->write(c);
+}
+void puts(FILE *f, const char *str)
+{
+    size_t len = strlen(str);
+    for(size_t i = 0; i < len; i++) {
+        putc(f, str[i]);
+    }
+}
+void set_cursor(uint32 index)
+{
     info.vga_index = index;
     info.next_line_index = info.vga_index / 80 + 1;
 }
@@ -73,8 +94,8 @@ void print_char(char ch) {
     info.vga_buffer[info.vga_index] = vga_entry(ch, info.g_fore_color, info.g_back_color);
     info.vga_index++;
 }
-uint32 strlen(const char* str) {
-    uint32 length = 0;
+size_t strlen(const char* str) {
+    size_t length = 0;
     while(str[length])
         length++;
     return length;
@@ -90,59 +111,61 @@ uint32 digit_count( int num) {
     return count;
 }
 uint32 digit_count64(uint64 num) {
-  uint32 count = 0;
-  if(num == 0)
-    return 1;
-  while(num > 0) {
-    count++;
-    num = num / 10;
-  }
-  return count;
+    uint32 count = 0;
+    if(num == 0)
+        return 1;
+    while(num > 0) {
+        count++;
+        num = num / 10;
+    }
+    return count;
 }
 void itoa(int num, char *number)
 {
-  int dgcount = digit_count(num);
-  int index = dgcount - 1;
-  char x;
-  if(num == 0 && dgcount == 1){
-    number[0] = '0';
-    number[1] = '\0';
-  }else{
-    while(num != 0){
-      x = num % 10;
-      number[index] = x + '0';
-      index--;
-      num = num / 10;
+    int dgcount = digit_count(num);
+    int index = dgcount - 1;
+    char x;
+
+    if(num == 0 && dgcount == 1) {
+        number[0] = '0';
+        number[1] = '\0';
+    } else {
+        while(num != 0) {
+            x = num % 10;
+            number[index] = x + '0';
+            index--;
+            num = num / 10;
+        }
+        number[dgcount] = '\0';
     }
-    number[dgcount] = '\0';
-  }
 }
 void itoa64(uint64 num, char *number) {
-  int dgcount = digit_count64(num);
-  int index = dgcount - 1;
-  char x;
-  if(num == 0 && dgcount == 1){
-    number[0] = '0';
-    number[1] = '\0';
-  }else{
-    while(num != 0){
-      x = num % 10;
-      number[index] = x + '0';
-      index--;
-      num = num / 10;
+    int dgcount = digit_count64(num);
+    int index = dgcount - 1;
+    char x;
+
+    if(num == 0 && dgcount == 1) {
+        number[0] = '0';
+        number[1] = '\0';
+    } else {
+        while(num != 0) {
+            x = num % 10;
+            number[index] = x + '0';
+            index--;
+            num = num / 10;
+        }
+        number[dgcount] = '\0';
     }
-    number[dgcount] = '\0';
-  }
 }
 void print_int(uint32 num) {
-  char str_num[digit_count(num)+1];
-  itoa(num, str_num);
-  print_string(str_num);
+    char str_num[digit_count(num)+1];
+    itoa(num, str_num);
+    print_string(str_num);
 }
 void print_long(uint64 num) {
-  char str_num[digit_count64(num)+1];
-  itoa64(num, str_num);
-  print_string(str_num);
+    char str_num[digit_count64(num)+1];
+    itoa64(num, str_num);
+    print_string(str_num);
 }
 void print_string(char *str)
 {
@@ -152,11 +175,12 @@ void print_string(char *str)
         index++;
     }
 }
+
 uint8 inb(uint16 port)
 {
-  uint8 ret;
-  asm volatile("inb %1, %0" : "=a"(ret) : "d"(port));
-  return ret;
+    uint8 ret;
+    asm volatile("inb %1, %0" : "=a"(ret) : "d"(port));
+    return ret;
 }
 
 void outb(uint16 port, uint8 data)
@@ -166,12 +190,25 @@ void outb(uint16 port, uint8 data)
 
 char get_input_keycode()
 {
-  char ch = 0;
-  while((ch = inb(KEYBOARD_PORT)) != 0){
-    if(ch > 0)
-      return ch;
-  }
-  return ch;
+    char ch = 0;
+    while((ch = inb(KEYBOARD_PORT)) != 0) {
+        if(ch > 0)
+            return ch;
+    }
+    return ch;
+}
+
+char getc(FILE *f)
+{
+    if(f == stdin) {
+        return get_ascii_char(get_input_keycode());
+    }
+    char ch = 0;
+    while((ch = f->read()) != EOF) {
+        if(ch > 0)
+            return ch;
+    }
+    return 0;
 }
 
 void wait_for_io(uint32 timer_count)
@@ -188,7 +225,7 @@ void sleep(uint32 timer_count)
 {
   wait_for_io(timer_count);
 }
-
+/*
 void test_input()
 {
   char ch = 0;
@@ -210,4 +247,4 @@ void test_input()
       first = true;
     }
   }while(ch > 0);
-}
+}*/

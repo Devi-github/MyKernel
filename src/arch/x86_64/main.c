@@ -1,23 +1,26 @@
-#include "kernel.h"
-#include "keyboard.h"
-#include "math.h"
 #include "stdio_myos.h"
-#include "errors.h"
-#include "char.h"
+#include "random.h"
+#include "kernel.h"
+
+void get_chars() {
+    bool first = true;
+    while(1) {
+        putc(stdout, getc(stdin));
+        if(first) {
+            sleep(100000000);
+            first = false;
+        } else {
+            sleep(10000000);
+        }
+    }
+}
 
 void _cmain() {
-    uint64 seed = __gcca();
+    init_vga(C_WHITE, C_BLACK);
 
-    init_vga(WHITE, BLACK);
+    puts(stdout, "Hello, world!\n");
 
-    float a = 3.14159;
+    get_chars();
 
-    set_cursor(0);
-    uint16 shrt = __random16(&seed);
-    print_int(shrt);
-    print_new_line();
-    char str[20];
-    itoa64(8844564569835, str);
-    print_string(str);
     return;
 }
