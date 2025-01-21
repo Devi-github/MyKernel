@@ -1,4 +1,6 @@
 global start
+
+global gdt64
 extern long_mode_start
 
 section .text
@@ -10,10 +12,13 @@ start:
     call check_cpuid
     call check_long_mode
 
-    call set_up_page_tables ; new
-    call enable_paging     ; new
+    call set_up_page_tables
+    call enable_paging
+    call enable_long_mode
+
     lgdt [gdt64.pointer]
-    jmp gdt64.code:long_mode_start
+    jmp gdt64.kernel_code:long_mode_start
+
     hlt
 
 check_multiboot:
@@ -23,6 +28,7 @@ check_multiboot:
 .no_multiboot:
     mov al, "0"
     jmp error
+
 check_cpuid:
     ; Check if CPUID is supported by attempting to flip the ID bit (bit 21)
     ; in the FLAGS register. If we can flip it, CPUID is available.
@@ -58,6 +64,7 @@ check_cpuid:
 .no_cpuid:
     mov al, "1"
     jmp error
+
 check_long_mode:
     ; test if extended processor info in available
     mov eax, 0x80000000    ; implicit argument for cpuid
@@ -81,6 +88,7 @@ error:
     mov dword [0xb8008], 0x4f204f20
     mov byte  [0xb800a], al
     hlt
+
 set_up_page_tables:
     ; map first P4 entry to P3 table
     mov eax, p3_table
@@ -106,6 +114,7 @@ set_up_page_tables:
     jne .map_p2_table  ; else map the next entry
 
     ret
+
 enable_paging:
     ; load P4 to cr3 register (cpu uses this to access the P4 table)
     mov eax, p4_table
@@ -116,6 +125,9 @@ enable_paging:
     or eax, 1 << 5
     mov cr4, eax
 
+    ret
+
+enable_long_mode:
     ; set the long mode bit in the EFER MSR (model specific register)
     mov ecx, 0xC0000080
     rdmsr
@@ -128,6 +140,7 @@ enable_paging:
     mov cr0, eax
 
     ret
+
 section .bss
 align 4096
 p4_table:
@@ -141,10 +154,21 @@ stack_bottom:
 stack_top:
 
 section .rodata
-gdt64:
+
+gdt64: ; TODO: Expand GDT for long mode (128 bit wide entries)
     dq 0
-.code: equ $ - gdt64
-    dq (1 << 43) | (1 << 44) | (1 << 47) | (1 << 53) 
+.kernel_code: equ $ - gdt64
+    dd 0xFFFF0000
+    dd 0x00AF9A00
+.kernel_data: equ $ - gdt64
+    dd 0xFFFF0000
+    dd 0x00CF9200
+.user_code: equ $ - gdt64
+    dd 0xFFFF0000
+    dd 0x00AFFA00
+.user_data: equ $ - gdt64
+    dd 0xFFFF0000
+    dd 0x00CFF200
 .pointer:
-    dw $ - gdt64 - 1
-    dq gdt64
+    dw $ - gdt64 - 1 ; size
+    dq gdt64         ; ptr

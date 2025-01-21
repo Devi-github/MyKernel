@@ -12,6 +12,8 @@ typedef unsigned long long size_t;
 #define UINT16_MAX 0xFFFF
 #define UINT8_MAX 0xFF
 
+#define WORD_SIZE 4
+
 #define NULL (void*)0
 
 typedef unsigned char bool;

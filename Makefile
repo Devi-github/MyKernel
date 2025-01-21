@@ -1,28 +1,36 @@
-CXX := gcc
+CC := gcc
 ASMC := nasm
-LDXX := ld
+LD := ld
+MAKE ?= make
 
 arch ?= x86_64
-kernel := build/kernel-$(arch).bin
-iso := build/os-$(arch).iso
+build_dir = $(shell pwd)/build/arch/$(arch)
+source_dir = $(shell pwd)/src/arch/$(arch)
+driver_build_dir = $(build_dir)/driver
 
-C_FLAGS := -ggdb -m64 -ffreestanding -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -nostdlib
+kernel := $(build_dir)/kernel-$(arch).bin
+iso := $(build_dir)/os-$(arch).iso
+
+C_FLAGS := -ggdb -m64 -ffreestanding -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -nostdlib -I$(source_dir)/libc
 ASM_FLAGS := -felf64
 LINK_FLAGS := -n -T
 
-linker_script := src/arch/$(arch)/linker.ld
-grub_cfg := src/arch/$(arch)/grub.cfg
-assembly_source_files := $(wildcard src/arch/$(arch)/*.s)
-assembly_object_files := $(patsubst src/arch/$(arch)/%.s, \
-	build/arch/$(arch)/%.o, $(assembly_source_files))
+linker_script := $(source_dir)/linker.ld
+grub_cfg := $(source_dir)/grub.cfg
+assembly_source_files := $(wildcard $(source_dir)/**/*.s)
+assembly_object_files := $(patsubst $(source_dir)/%.s, \
+	$(build_dir)/%.o, $(assembly_source_files))
 
-h_files := $(wildcard src/arch/$(arch)/*.h)
+enabled_drivers = vga
+driver_obj_files = $(patsubst %,$(driver_build_dir)/%.o,$(enabled_drivers))
 
-c_source_files := $(wildcard src/arch/$(arch)/*.c)
-c_object_files := $(patsubst src/arch/$(arch)/%.c, \
-	build/arch/$(arch)/%.o, $(c_source_files))
+c_source_files := $(wildcard $(source_dir)/**/*.c)
+c_object_files := $(patsubst $(source_dir)/%.c, \
+	$(build_dir)/%.o, $(c_source_files))
 
-.PHONY: all build rebuild clean run iso check
+export
+
+.PHONY: all build rebuild clean run iso check drivers .FORCE
 
 all: check
 
@@ -30,38 +38,43 @@ objdump: $(kernel)
 	@objdump -S $(kernel)
 
 clean:
-	@rm -r build
+	rm -r build
 
 run: $(iso)
-	@qemu-system-x86_64 -cdrom $(iso)
+	qemu-system-x86_64 -cdrom $(iso)
 
 rebuild: clean build
 
 build: $(iso)
 
 check: build
-	@file $(iso)
+	file $(iso)
 
 iso: $(iso)
 
-$(iso): $(kernel) $(grub_cfg)
-	@mkdir -p build/isofiles/boot/grub
-	@cp $(kernel) build/isofiles/boot/kernel.bin
-	@cp $(grub_cfg) build/isofiles/boot/grub
-	@grub-mkrescue -o $(iso) build/isofiles
-	@rm -r build/isofiles
+.FORCE:
+drivers: $(driver_obj_files)
+# Build all drivers with makefile
 
-$(kernel): $(assembly_object_files) $(c_object_files) $(linker_script)
-	@$(LDXX) $(LINK_FLAGS) $(linker_script) -o $(kernel) $(c_object_files) $(assembly_object_files)
+$(driver_obj_files): $(driver_build_dir) .FORCE
+	$(MAKE) -C $(source_dir)/driver
+
+$(iso): $(kernel) $(grub_cfg)
+	mkdir -p build/isofiles/boot/grub
+	cp $(kernel) build/isofiles/boot/kernel.bin
+	cp $(grub_cfg) build/isofiles/boot/grub
+	grub-mkrescue -o $(iso) build/isofiles
+	rm -r build/isofiles
+
+$(kernel): $(assembly_object_files) $(c_object_files) $(linker_script) drivers
+	$(LD) $(LINK_FLAGS) $(linker_script) -o $(kernel) $(c_object_files) $(driver_obj_files) $(assembly_object_files)
 
 # compile c files
-build/arch/$(arch)/%.o: src/arch/$(arch)/%.c $(h_files)
+$(build_dir)/%.o: $(source_dir)/%.c $(c_source_files)
 	@mkdir -p $(shell dirname $@)
-	@$(CXX) $(C_FLAGS) -c $< -o $@
+	$(CC) $(C_FLAGS) -c $< -o $@
 
 # compile assembly files
-build/arch/$(arch)/%.o: src/arch/$(arch)/%.s
+$(build_dir)/%.o: $(source_dir)/%.s $(assembly_source_files)
 	@mkdir -p $(shell dirname $@)
-#	@gcc -c $< -o $@
-	@$(ASMC) $(ASM_FLAGS) $< -o $@
-	
+	$(ASMC) $(ASM_FLAGS) $< -o $@

@@ -2,7 +2,6 @@ global long_mode_start
 section .text
 bits 64
 
-
 long_mode_start:
     mov ax, 0
     mov ss, ax
@@ -18,10 +17,8 @@ long_mode_start:
 
     hlt
 
-section .rodata
-CONST_FLT: dq 1.035
-
 section .bss
+align 0x10 ; important to avoid undefined behaviour
 long_stack_bottom:
     resb 4096
 long_stack_top:
