@@ -7,6 +7,12 @@
 #ifndef _PANIC_H
 #define _PANIC_H
 
-void panic(char *message, size_t length);
+#include <types.h>
+
+struct KernelPanicInfo {
+    const char *message;
+};
+
+void kpanic(struct KernelPanicInfo *panicInfo);
 
 #endif

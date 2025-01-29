@@ -1,6 +1,11 @@
 #include "vga.h"
 #include <string.h>
 
+#define VGA_ADDRESS (void*)0xB8000
+#define BUFSIZE 2200
+#define VGA_WIDTH 80
+#define VGA_HEIGHT 25
+
 // Clears VGA buffer
 void vga_clear_buffer(uint8, uint8);
 

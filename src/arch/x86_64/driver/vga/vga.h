@@ -1,12 +1,11 @@
-#ifndef _VGA_H
-#define _VGA_H
+/*
+    VGA text mode driver.
+*/
+
+#ifndef _VGA_DRIVER_H
+#define _VGA_DRIVER_H
 
 #include <types.h>
-
-#define VGA_ADDRESS (void*)0xB8000
-#define BUFSIZE 2200
-#define VGA_WIDTH 80
-#define VGA_HEIGHT 25
 
 /// @brief Computes an entry into a VGA buffer
 /// @param character Character to input

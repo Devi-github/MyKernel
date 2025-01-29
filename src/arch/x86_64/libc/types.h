@@ -40,4 +40,10 @@ enum vga_color {
     C_WHITE,
 };
 
+enum OsResult {
+    OS_RESULT_SUCCESS,
+    OS_RESULT_GENERIC_ERROR,
+    OS_RESULT_DISK_ACCESS_ERROR,
+};
+
 #endif
