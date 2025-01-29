@@ -25,5 +25,5 @@ jobs:
         tag: nightly
         rm: true
         token: ${{ secrets.GITHUB_TOKEN }}
-        files: build/*.iso
+        files: build/**/*.iso
     # https://github.com/pi4erd/MyKernel/releases/tag/nightly
