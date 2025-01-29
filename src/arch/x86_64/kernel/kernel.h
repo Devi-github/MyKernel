@@ -6,4 +6,6 @@
 // Gets current clock cycles as a 64 bit number
 uint64 __gcca();
 
+void kprint(const char *);
+
 #endif

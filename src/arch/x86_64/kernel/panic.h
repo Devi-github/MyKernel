@@ -13,6 +13,6 @@ struct KernelPanicInfo {
     const char *message;
 };
 
-void kpanic(struct KernelPanicInfo *panicInfo);
+void kpanic(struct KernelPanicInfo *panicInfo) __attribute__((noreturn));
 
 #endif
