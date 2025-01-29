@@ -2,6 +2,7 @@ CC := gcc
 ASMC := nasm
 LD := ld
 MAKE ?= make
+GRUB_MKRESCUE ?= grub-mkrescue
 
 arch ?= x86_64
 build_dir = $(shell pwd)/build/arch/$(arch)
@@ -59,11 +60,14 @@ drivers: $(driver_obj_files)
 $(driver_obj_files): $(driver_build_dir) .FORCE
 	$(MAKE) -C $(source_dir)/driver
 
+$(driver_build_dir):
+	mkdir -p $(driver_build_dir)
+
 $(iso): $(kernel) $(grub_cfg)
 	mkdir -p build/isofiles/boot/grub
 	cp $(kernel) build/isofiles/boot/kernel.bin
 	cp $(grub_cfg) build/isofiles/boot/grub
-	grub-mkrescue -o $(iso) build/isofiles
+	$(GRUB_MKRESCUE) -o $(iso) build/isofiles
 	rm -r build/isofiles
 
 $(kernel): $(assembly_object_files) $(c_object_files) $(linker_script) drivers

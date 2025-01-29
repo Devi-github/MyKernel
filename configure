@@ -4,9 +4,9 @@
 
 echo "Configuring system for build of system"
 
-sudo apt update
-sudo apt install -y gcc make nasm
+apt-get update
+apt-get install -y gcc make nasm
 # QEMU only for emulation
 # sudo apt install qemu -y
 # sudo apt install qemu-system-x86 -y
-sudo apt install -y xorriso mtools
+apt-get install -y xorriso mtools grub2-common grub-pc
